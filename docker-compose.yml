@@ -1,0 +1,44 @@
+version: "3"
+
+networks: 
+  backend:
+  frontend:
+
+services:
+  keycloak:
+    image: jboss/keycloak:10.0.2
+    environment: 
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: kerri
+      DB_ADDR: mysql
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      DB_PORT: "3306"
+      DB_DATABASE: keycloak
+      KEYCLOAK_IMPORT: /tmp/import-realm.json
+    ports: 
+      - 8080:8080
+    volumes: 
+      - ./keycloak:/tmp
+    networks: 
+      - backend
+      - frontend
+  mysql:
+    image: mysql:8.0.20
+    environment: 
+       MYSQL_ROOT_PASSWORD: kerri
+       MYSQL_USER: keycloak 
+       MYSQL_PASSWORD: keycloak
+       MYSQL_DATABASE: keycloak
+    ports: 
+      - 3306:3306
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    networks: 
+      - backend
+      - frontend
